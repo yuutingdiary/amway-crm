@@ -192,84 +192,67 @@ textarea.fc{min-height:72px;resize:vertical}
 
 /* ── Mobile (≤640px) ── */
 @media (max-width:640px){
-  /* Hide desktop sidebar, show bottom nav */
-  .sidebar{transform:translateX(-100%);transition:transform .25s;z-index:110;width:240px !important}
-  .sidebar.mob-open{transform:none}
-  .bottom-nav{display:flex}
+  /* Hide desktop sidebar; use slide-in overlay */
+  .sidebar{transform:translateX(-100%);transition:transform .28s cubic-bezier(.4,0,.2,1);z-index:110;width:260px !important;box-shadow:none}
+  .sidebar.mob-open{transform:none;box-shadow:4px 0 24px rgba(0,0,0,.18)}
+  .bottom-nav{display:none !important}
   .main{margin-left:0 !important}
-
+  /* Hamburger button */
+  .mob-menu-btn{display:flex !important;align-items:center;justify-content:center;width:36px;height:36px;background:none;border:none;color:var(--tx2);font-size:22px;cursor:pointer;border-radius:var(--rs);margin-right:4px}
+  .mob-menu-btn:hover{background:var(--bg)}
   /* Header */
   .hdr{padding:0 14px;height:52px}
   .htitle{font-size:15px}
-  #hdr-add-cust{padding:5px 10px;font-size:12px}
-  #hdr-add-cust span{display:none} /* hide text, show only icon */
-
   /* Pages */
-  .page{padding:14px;padding-bottom:72px} /* room for bottom nav */
-
+  .page{padding:14px;padding-bottom:24px}
   /* Stats: 2 cols */
   .sgrid{grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
   .sval{font-size:22px}
   .slabel{font-size:11px}
-
   /* Dashboard grids */
   .d2g{grid-template-columns:1fr;gap:12px;margin-bottom:14px}
   .card{padding:14px}
-
-  /* Table: hide less important columns on mobile */
+  /* Table */
   .hide-mob{display:none}
   td,th{padding:7px 8px;font-size:12px}
-  .tbl-wrap{margin:0 -14px;padding:0 14px}
-
   /* Customer filters: scrollable */
   .ftabs{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
   .ftabs::-webkit-scrollbar{display:none}
   .ftab{white-space:nowrap;flex-shrink:0}
-
   /* Toolbar */
   .toolbar{gap:6px}
   .sinput{min-width:0;flex:1}
-  #sort-col,#sort-dir{display:none} /* simplify on mobile */
-
-  /* Modals: full screen on mobile */
+  #sort-col,#sort-dir{display:none}
+  /* Modals: bottom sheet */
   .overlay{padding:0;align-items:flex-end}
   .modal{width:100% !important;max-width:100% !important;border-radius:16px 16px 0 0 !important;max-height:92vh;margin-bottom:0}
   .modal.sm{width:100% !important;border-radius:16px 16px 0 0 !important}
   .mhdr{padding:14px 16px 12px}
   .mbdy{padding:16px;max-height:calc(92vh - 120px)}
   .mftr{padding:10px 16px}
-
-  /* Forms: single column on mobile */
+  /* Forms */
   .fr,.fr3{grid-template-columns:1fr;gap:10px}
-
   /* Reminder cards */
   .rcard{padding:10px 12px;gap:10px}
   .rico{width:32px;height:32px;font-size:16px;border-radius:8px}
-
-  /* Calendar cells */
+  /* Calendar */
   .cgrid{gap:2px}
   .cday{min-height:52px;padding:3px 2px}
-  .cdn{font-size:12px;width:22px;height:22px}
-  .cevt{font-size:11px}
-
-  /* Day panel: full width */
+  .cdn{font-size:13px;width:24px;height:24px}
+  .cevt{font-size:11px;padding:2px 4px}
+  /* Day panel */
   .dpanel{width:100% !important;border-radius:16px 16px 0 0;transform:translateY(100%)}
   .dpanel.open{transform:none}
-
-  /* Schedule items */
+  /* Schedule */
   .sc-item{flex-wrap:wrap;gap:8px}
   .sc-date{min-width:auto}
-
   /* Section headers */
   .shdr h2{font-size:14px}
   .shdr .btn{font-size:12px;padding:5px 10px}
-
   /* Col menu */
   .cmwrap{display:none}
-
   /* Settings */
   .cfg-box{font-size:12px}
-}
 
 /* ── Small mobile (≤380px) ── */
 @media (max-width:380px){
@@ -307,6 +290,11 @@ textarea.fc{min-height:72px;resize:vertical}
 .color-opt span{width:28px;height:28px;border-radius:50%;background:var(--c);border:3px solid transparent;transition:all .15s;box-sizing:border-box;display:block}
 .color-opt input:checked + span{border-color:#fff;box-shadow:0 0 0 2px var(--c);transform:scale(1.15)}
 .color-opt:hover span{transform:scale(1.1)}
+
+@keyframes loadbar{0%{opacity:1;transform:scaleX(0);transform-origin:left}50%{opacity:1;transform:scaleX(1);transform-origin:left}51%{transform-origin:right}100%{opacity:0;transform:scaleX(0);transform-origin:right}}
+
+/* Hamburger button — hidden on desktop, shown on mobile via media query */
+.mob-menu-btn{display:none}
 </style>
 </head>
 <body>
@@ -323,24 +311,19 @@ textarea.fc{min-height:72px;resize:vertical}
   </nav>
   <div class="sb-bot"><div class="ucard"><div class="av" style="width:34px;height:34px;font-size:13px">我</div><div><div style="font-size:13px;font-weight:500;color:#fff">使用者</div><div style="font-size:11px;color:rgba(255,255,255,.5)">業務顧問</div></div></div></div>
 </aside>
-
-<!-- BOTTOM NAV (mobile) -->
-<div class="bottom-nav" id="bottom-nav">
-  <div class="bn-item active" data-page="dashboard" onclick="showPage('dashboard',this);syncBottomNav('dashboard')"><i class="ti ti-layout-dashboard"></i><span>總覽</span></div>
-  <div class="bn-item" data-page="customers" onclick="showPage('customers',this);syncBottomNav('customers')"><i class="ti ti-users"></i><span>客戶</span></div>
-  <div class="bn-item" data-page="calrem" onclick="showPage('calrem',this);syncBottomNav('calrem')"><i class="ti ti-calendar"></i><span>行事曆</span><span class="bn-badge" id="bn-badge">0</span></div>
-  <div class="bn-item" data-page="schedule" onclick="showPage('schedule',this);syncBottomNav('schedule')"><i class="ti ti-table-import"></i><span>課表</span></div>
-  <div class="bn-item" onclick="toggleMobSidebar()"><i class="ti ti-menu-2"></i><span>更多</span></div>
-</div>
 <div class="sb-backdrop" id="sb-backdrop" onclick="closeMobSidebar()"></div>
+
+
 
 <main class="main">
 <div class="hdr">
-  <div class="htitle" id="htitle">總覽儀表板</div>
+  <div style="display:flex;align-items:center;gap:10px">
+    <button class="mob-menu-btn" id="mob-menu-btn" onclick="toggleMobSidebar()" style="display:none"><i class="ti ti-menu-2"></i></button>
+    <div class="htitle" id="htitle">總覽儀表板</div>
+  </div>
   <div style="display:flex;align-items:center;gap:10px">
     <span style="font-size:12px;color:var(--tx3)" id="today-lbl"></span>
     <span id="sync-ind" style="font-size:11px;padding:3px 9px;border-radius:20px;display:none;background:var(--wa-l);color:var(--wa)">同步中…</span>
-    <button class="btn btn-sm btn-p" onclick="openCustModal()"><i class="ti ti-plus"></i> 新增客戶</button>
   </div>
 </div>
 
@@ -659,7 +642,12 @@ textarea.fc{min-height:72px;resize:vertical}
   </div>
 </div>
 </div>
+
 <div class="toast" id="toast"></div>
+
+</main>
+</div>
+
 <script>
 
 // ================================================================
@@ -758,10 +746,12 @@ function showPage(name,el){
   document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
   document.querySelectorAll('.ni').forEach(function(n){n.classList.remove('active')});
   var pg=ge('pg-'+name);if(pg)pg.classList.add('active');
-  if(el)el.classList.add('active');
+  if(el&&el.classList)el.classList.add('active');
   ge('htitle').textContent=PAGE_TITLES[name]||name;
   var fns={dashboard:renderDash,customers:renderCust,calrem:renderCalRem,schedule:renderSched,instructors:renderInst,settings:renderSettings};
   if(fns[name])fns[name]();
+  // close sidebar on mobile after selecting a page
+  closeMobSidebar();
 }
 function swTab(el,paneId){
   el.closest('.mtabs').querySelectorAll('.mtab').forEach(function(t){t.classList.remove('on')});
@@ -1632,18 +1622,39 @@ function initSample(){
 loadLocal();initSample();
 var now=new Date();calY=now.getFullYear();calM=now.getMonth();
 ge('today-lbl').textContent=calY+'/'+(now.getMonth()+1).toString().padStart(2,'0')+'/'+now.getDate().toString().padStart(2,'0')+' 週'+WKS[now.getDay()];
+
+// ── 開啟時自動從雲端載入最新資料（若已設定）──
+if(CFG.apiKey&&CFG.binId){
+  var loadingEl=document.createElement('div');
+  loadingEl.style.cssText='position:fixed;top:0;left:0;right:0;height:3px;background:var(--pr);z-index:9999;animation:loadbar 1.5s ease-in-out infinite';
+  document.body.appendChild(loadingEl);
+  fetch('https://api.jsonbin.io/v3/b/'+CFG.binId+'/latest',{
+    headers:{'X-Master-Key':CFG.apiKey,'X-Bin-Meta':'false'}
+  }).then(function(r){
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    return r.json();
+  }).then(function(d){
+    var hasData=false;
+    ['customers','reminders','schedules','calEvents','instructors'].forEach(function(k){
+      if(d[k]&&d[k].length!==undefined){DB[k]=d[k];hasData=true;}
+    });
+    if(hasData){saveLocal();renderDash();updateBadge();}
+  }).catch(function(e){
+    console.log('Auto-pull failed:',e.message);
+  }).finally(function(){
+    if(loadingEl.parentNode)loadingEl.parentNode.removeChild(loadingEl);
+  });
+}
+
 renderDash();
 
 // ================================================================
 // MOBILE HELPERS
 // ================================================================
 function syncBottomNav(page){
-  document.querySelectorAll('.bn-item[data-page]').forEach(function(el){
-    el.classList.toggle('active', el.dataset.page===page);
-  });
-  // Also sync sidebar
-  document.querySelectorAll('.ni[data-page]').forEach(function(el){
-    el.classList.toggle('active', el.dataset.page===page);
+  // sync sidebar only (no bottom nav)
+  document.querySelectorAll('.ni').forEach(function(el){
+    el.classList.toggle('active', (el.getAttribute('onclick')||'').indexOf("'"+page+"'")>=0);
   });
 }
 function toggleMobSidebar(){
